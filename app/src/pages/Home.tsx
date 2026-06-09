@@ -3,7 +3,7 @@ import Services from '@/sections/Services'
 import WhyChooseUs from '@/sections/WhyChooseUs'
 import Process from '@/sections/Process'
 import CaseStudies from '@/sections/CaseStudies'
-import Testimonials from '@/sections/Testimonials'
+// import Testimonials from '@/sections/Testimonials' // Commented out for future use
 import CTABanner from '@/sections/CTABanner'
 
 export default function Home() {
@@ -14,7 +14,7 @@ export default function Home() {
       <WhyChooseUs />
       <Process />
       <CaseStudies />
-      <Testimonials />
+      {/* <Testimonials /> */} {/* Commented out for future use */}
       <CTABanner />
     </main>
   )

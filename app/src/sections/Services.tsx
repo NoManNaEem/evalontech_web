@@ -1,47 +1,43 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
-import { Grid3X3, Sparkles, Code2, ShieldCheck, ArrowRight } from 'lucide-react'
+import { Grid3X3, Sparkles, Code2, ShieldCheck, ArrowRight, LucideIcon } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SectionBadge from '@/components/SectionBadge'
+import { useServices } from '@/hooks/useServices'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const services = [
-  {
-    icon: Grid3X3,
-    title: 'ERP Solutions',
-    description: 'Manage your entire business with a fully integrated Odoo ERP system. Streamline operations from finance and HR to inventory and sales.',
-    image: '/images/erp-dashboard.jpg',
-  },
-  {
-    icon: Sparkles,
-    title: 'AI & Automation',
-    description: 'Automate workflows and unlock smarter decision-making. Harness AI to predict outcomes and surface insights that drive strategy.',
-    image: '/images/ai-automation.jpg',
-  },
-  {
-    icon: Code2,
-    title: 'Web & App Development',
-    description: 'Build scalable digital products tailored to your needs. Fast, scalable web and mobile applications built with modern frameworks.',
-    image: '/images/web-dev.jpg',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Support & Optimization',
-    description: 'Ensure performance with continuous support and improvements. We stay with you beyond delivery for long-term success.',
-    image: '/images/case-study-logistics.jpg',
-  },
-]
+// Map icon_name strings from DB back to Lucide components
+const iconMap: Record<string, LucideIcon> = {
+  Grid3X3,
+  Sparkles,
+  Code2,
+  ShieldCheck,
+}
+
+function ServiceSkeleton() {
+  return (
+    <div className="service-card glass-card rounded-2xl overflow-hidden animate-pulse">
+      <div className="h-48 bg-white/5" />
+      <div className="p-6 space-y-3">
+        <div className="h-5 bg-white/10 rounded w-2/3" />
+        <div className="h-3 bg-white/5 rounded w-full" />
+        <div className="h-3 bg-white/5 rounded w-5/6" />
+      </div>
+    </div>
+  )
+}
 
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null)
   const cardsRef = useRef<HTMLDivElement>(null)
+  const { services, loading } = useServices()
 
   useEffect(() => {
     const section = sectionRef.current
     const cards = cardsRef.current
-    if (!section || !cards) return
+    if (!section || !cards || loading) return
 
     const cardElements = cards.querySelectorAll('.service-card')
 
@@ -65,7 +61,7 @@ export default function Services() {
     return () => {
       trigger.kill()
     }
-  }, [])
+  }, [loading])
 
   return (
     <section ref={sectionRef} className="section-spacing relative">
@@ -86,41 +82,46 @@ export default function Services() {
 
         {/* Services Grid */}
         <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {services.map((service) => (
-            <div
-              key={service.title}
-              className="service-card group glass-card rounded-2xl overflow-hidden cursor-pointer"
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
-                <div className="absolute bottom-4 left-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary-blue/20 backdrop-blur-sm flex items-center justify-center mb-3 group-hover:bg-primary-blue/40 transition-colors">
-                    <service.icon className="w-6 h-6 text-accent-cyan" />
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => <ServiceSkeleton key={i} />)
+            : services.map((service) => {
+                const Icon = iconMap[service.icon_name ?? ''] ?? Grid3X3
+                return (
+                  <div
+                    key={service.id}
+                    className="service-card group glass-card rounded-2xl overflow-hidden cursor-pointer"
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={service.image_url ?? '/images/erp-dashboard.jpg'}
+                        alt={service.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/50 to-transparent" />
+                      <div className="absolute bottom-4 left-4">
+                        <div className="w-12 h-12 rounded-xl bg-primary-blue/20 backdrop-blur-sm flex items-center justify-center mb-3 group-hover:bg-primary-blue/40 transition-colors">
+                          <Icon className="w-6 h-6 text-accent-cyan" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold text-text-primary mb-2 group-hover:text-accent-cyan transition-colors">
+                        {service.title}
+                      </h3>
+                      <p className="text-text-secondary text-sm leading-relaxed mb-4">
+                        {service.description}
+                      </p>
+                      <Link
+                        to="/services"
+                        className="inline-flex items-center gap-2 text-primary-blue text-sm font-medium group-hover:text-accent-cyan transition-colors"
+                      >
+                        Learn More
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-text-primary mb-2 group-hover:text-accent-cyan transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-text-secondary text-sm leading-relaxed mb-4">
-                  {service.description}
-                </p>
-                <Link
-                  to="/services"
-                  className="inline-flex items-center gap-2 text-primary-blue text-sm font-medium group-hover:text-accent-cyan transition-colors"
-                >
-                  Learn More
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            </div>
-          ))}
+                )
+              })}
         </div>
 
         {/* View All CTA */}

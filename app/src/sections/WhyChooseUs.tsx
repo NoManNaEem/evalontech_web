@@ -1,40 +1,26 @@
 import { useEffect, useRef } from 'react'
-import { Shield, Lightbulb, Eye, Award } from 'lucide-react'
+import { Shield, Lightbulb, Eye, Award, LucideIcon } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import SectionBadge from '@/components/SectionBadge'
+import { useBenefits } from '@/hooks/useBenefits'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const benefits = [
-  {
-    icon: Shield,
-    title: 'Reliability',
-    description: 'When we agree to a deadline, we engineer everything around hitting it. No excuses, no last-minute surprises.',
-  },
-  {
-    icon: Lightbulb,
-    title: 'Innovation',
-    description: 'We continuously integrate AI, cloud, and modern engineering practices so every solution is future-proof from day one.',
-  },
-  {
-    icon: Eye,
-    title: 'Clarity',
-    description: 'Every decision is documented, every stage is communicated, and you always know exactly where things stand.',
-  },
-  {
-    icon: Award,
-    title: 'Excellence',
-    description: 'We hold every deliverable — engineering, design, and communication — to a standard that reflects long-term quality.',
-  },
-]
+const iconMap: Record<string, LucideIcon> = {
+  Shield,
+  Lightbulb,
+  Eye,
+  Award,
+}
 
 export default function WhyChooseUs() {
   const sectionRef = useRef<HTMLElement>(null)
+  const { benefits, loading } = useBenefits()
 
   useEffect(() => {
     const section = sectionRef.current
-    if (!section) return
+    if (!section || loading) return
 
     const elements = section.querySelectorAll('.reveal-item')
     gsap.set(elements, { y: 50, opacity: 0 })
@@ -55,7 +41,7 @@ export default function WhyChooseUs() {
     })
 
     return () => { trigger.kill() }
-  }, [])
+  }, [loading])
 
   return (
     <section ref={sectionRef} className="section-spacing relative overflow-hidden">
@@ -102,24 +88,37 @@ export default function WhyChooseUs() {
             </p>
 
             <div className="space-y-6">
-              {benefits.map((benefit) => (
-                <div
-                  key={benefit.title}
-                  className="reveal-item group flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors duration-300"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary-blue/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-blue/20 transition-colors">
-                    <benefit.icon className="w-6 h-6 text-primary-blue group-hover:text-accent-cyan transition-colors" />
-                  </div>
-                  <div>
-                    <h3 className="text-text-primary font-semibold mb-1 group-hover:text-accent-cyan transition-colors">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-text-secondary text-sm leading-relaxed">
-                      {benefit.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
+              {loading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="reveal-item flex items-start gap-4 p-4 rounded-xl animate-pulse">
+                      <div className="w-12 h-12 rounded-xl bg-white/5 flex-shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-white/10 rounded w-1/3" />
+                        <div className="h-3 bg-white/5 rounded w-full" />
+                      </div>
+                    </div>
+                  ))
+                : benefits.map((benefit) => {
+                    const Icon = iconMap[benefit.icon_name ?? ''] ?? Shield
+                    return (
+                      <div
+                        key={benefit.id}
+                        className="reveal-item group flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors duration-300"
+                      >
+                        <div className="w-12 h-12 rounded-xl bg-primary-blue/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary-blue/20 transition-colors">
+                          <Icon className="w-6 h-6 text-primary-blue group-hover:text-accent-cyan transition-colors" />
+                        </div>
+                        <div>
+                          <h3 className="text-text-primary font-semibold mb-1 group-hover:text-accent-cyan transition-colors">
+                            {benefit.title}
+                          </h3>
+                          <p className="text-text-secondary text-sm leading-relaxed">
+                            {benefit.description}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  })}
             </div>
           </div>
         </div>
