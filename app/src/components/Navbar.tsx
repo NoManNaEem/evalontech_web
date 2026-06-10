@@ -38,14 +38,17 @@ export default function Navbar() {
       >
         <div className="section-padding">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-blue to-accent-cyan flex items-center justify-center group-hover:shadow-glow transition-shadow duration-300">
-                <span className="text-white font-bold text-lg">E</span>
-              </div>
-              <span className="text-xl font-semibold text-text-primary tracking-tight">
-                Evalon<span className="text-primary-blue">Tech</span>
-              </span>
+            <Link to="/" className="flex items-center gap-2 group">
+              <img
+                src="/images/logo-icon.png"
+                alt="EvalonTech"
+                className="w-9 h-9 object-contain brightness-0 invert group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.5)] transition-all duration-300 sm:hidden"
+              />
+              <img
+                src="/images/logo-full.png"
+                alt="EvalonTech"
+                className="h-12 object-contain brightness-0 invert hidden sm:block"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -78,13 +81,13 @@ export default function Navbar() {
                 <span>Insights</span>
               </Link>
               <a
-                href="https://wa.me/923365361778"
+                href="https://wa.me/923075706474"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
               >
                 <Phone className="w-4 h-4" />
-                <span>+92 336 5361778</span>
+                <span>+92 307 5706474</span>
               </a>
               <Link
                 to="/contact"

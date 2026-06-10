@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Mail, Phone, Clock, Send, CheckCircle, MapPin } from 'lucide-react'
+import { Mail, Phone, Clock, Send, CheckCircle, MapPin, Loader2 } from 'lucide-react'
 import SectionBadge from '@/components/SectionBadge'
+import emailjs from '@emailjs/browser'
 
 const budgetOptions = [
   '$ 5,000 - $ 10,000',
@@ -24,6 +25,8 @@ const serviceOptions = [
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,9 +36,33 @@ export default function Contact() {
     message: '',
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    setLoading(true)
+    setError('')
+
+    try {
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID',
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID',
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          company: formData.company || 'Not specified',
+          service: formData.service,
+          budget: formData.budget || 'Not specified',
+          message: formData.message,
+          to_email: 'info@evalontech.com',
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY'
+      )
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Email send failed:', err)
+      setError('Failed to send message. Please try again or contact us directly.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -182,12 +209,28 @@ export default function Contact() {
                     />
                   </div>
 
+                  {error && (
+                    <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                      {error}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-gradient-to-r from-primary-blue to-[#4F46E5] text-white font-medium hover:shadow-glow-lg transition-all duration-300 hover:scale-[1.02]"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-gradient-to-r from-primary-blue to-[#4F46E5] text-white font-medium hover:shadow-glow-lg transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    <Send className="w-5 h-5" />
-                    Send Message
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Send Message
+                      </>
+                    )}
                   </button>
                 </form>
               )}
@@ -214,23 +257,23 @@ export default function Contact() {
                     </div>
                   </a>
 
-                  <a href="tel:+923365361778" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                  <a href="tel:+923075706474" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
                     <div className="w-12 h-12 rounded-xl bg-primary-blue/10 flex items-center justify-center group-hover:bg-primary-blue/20 transition-colors">
                       <Phone className="w-5 h-5 text-primary-blue group-hover:text-accent-cyan transition-colors" />
                     </div>
                     <div>
                       <div className="text-sm text-text-secondary">Phone</div>
-                      <div className="text-text-primary font-medium">+92-336-5361778</div>
+                      <div className="text-text-primary font-medium">+92-307-5706474</div>
                     </div>
                   </a>
 
-                  <a href="https://wa.me/923365361778" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
+                  <a href="https://wa.me/923075706474" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors group">
                     <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
                       <Phone className="w-5 h-5 text-green-400" />
                     </div>
                     <div>
                       <div className="text-sm text-text-secondary">WhatsApp</div>
-                      <div className="text-text-primary font-medium">+92-336-5361778</div>
+                      <div className="text-text-primary font-medium">+92-307-5706474</div>
                     </div>
                   </a>
 

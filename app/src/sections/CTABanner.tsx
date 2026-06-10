@@ -61,7 +61,7 @@ export default function CTABanner() {
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <a
-                  href="https://wa.me/923365361778"
+                  href="https://wa.me/923075706474"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg glass-panel text-text-primary hover:border-primary-blue/40 transition-all duration-300 font-medium"
@@ -92,8 +92,8 @@ export default function CTABanner() {
                 </div>
                 <div>
                   <h4 className="text-text-primary font-semibold mb-1">Call Us</h4>
-                  <a href="tel:+923365361778" className="text-text-secondary hover:text-accent-cyan transition-colors">
-                    +92-336-5361778
+                  <a href="tel:+923075706474" className="text-text-secondary hover:text-accent-cyan transition-colors">
+                    +92-307-5706474
                   </a>
                 </div>
               </div>
